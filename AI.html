@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 15px;
+      padding: 40px;
+      width: 800px;
+      height: max-content;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      outline: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #764ba2;
+    }
+
+   #answer {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  min-height: 40px;
+  max-height: 250px;   /* Fixed max height */
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-y: auto;    /* Enables scroll if content is big */
+}
+
+
+    .loading {
+      display: none;
+      margin-top: 15px;
+      font-style: italic;
+      color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI ChatBot</h1>
+
+    <input type="text" id="question" placeholder="Type your question...">
+    <button  onclick="askAnswer()">Ask</button>
+    <img src="ni" alt="">
+    <div class="loading" id="loading">⏳ Thinking...</div>
+    <div id="answer">Your answer will appear here...</div>
+  </div>
+
+  <script>
+    async function askAnswer() {
+      const question = document.getElementById("question").value.trim();
+      const loading = document.getElementById("loading");
+      const answerBox = document.getElementById("answer");
+
+      if (question == "") {
+        alert("Please enter a question.");
+        return;
+      }
+
+      try {
+        loading.style.display = "block";
+        answerBox.innerText = "";
+
+        const response = await fetch(`http://localhost:8080/api/ollama/${encodeURIComponent(question)}`);
+        
+        if (!response.ok) throw new Error("Server error: " + response.status);
+
+        const data = await response.text();
+        answerBox.innerText = " Answer: " + data;
+
+      } catch (error) {
+        console.error("Error:", error);
+        answerBox.innerText = "Error fetching answer.";
+      } finally {
+        loading.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
